@@ -80,8 +80,20 @@
             @endif
 
             <div class="content">
-                <div class="title m-b-md">
-                    Laravel
+                <div>
+                    search form
+                </div>
+
+                <div>
+                    revenue graph
+                </div>
+
+                <div>
+                    <a href="{{ $emailUrl }}">{{ $emailTitle }}</a>
+                </div>
+
+                <div>
+                    revenue table
                 </div>
 
                 <div class="links">

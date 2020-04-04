@@ -14,5 +14,16 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    $emails = (object)[
+        'cc' => 'alexander@webscribble.com',
+        'bcc' => 'nick@webscribble.com',
+    ];
+    //HTML::mailto($email, 'title', $attributes);
+
+    $emailUrl = "mailto:" . $emails->cc . "?bcc=" . $emails->bcc;
+
+    return view('welcome', [
+        'emailUrl' => $emailUrl,
+        'emailTitle' => 'Email this report'
+    ]);
 });
