@@ -93,6 +93,10 @@
                 </div>
 
                 <div>
+                    {{ Html::mailto($emailUrl, $emailTitle) }}
+                </div>
+
+                <div>
                     revenue table
                 </div>
 

@@ -13,12 +13,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('test', 'OrderHistoryController@index');
+
+// move to OrderHistoryController@index
 Route::get('/', function () {
+
     $emails = (object)[
         'cc' => 'alexander@webscribble.com',
         'bcc' => 'nick@webscribble.com',
     ];
-    //HTML::mailto($email, 'title', $attributes);
 
     $emailUrl = "mailto:" . $emails->cc . "?bcc=" . $emails->bcc;
 
