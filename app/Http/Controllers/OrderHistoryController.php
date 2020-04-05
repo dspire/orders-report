@@ -7,14 +7,26 @@ use Illuminate\Http\Request;
 
 class OrderHistoryController extends Controller
 {
+    // split into OrderPageController, OrderController
     /**
      * Display a listing of the resource.
+     *
+     * @return \Illuminate\View\View
      */
-    // @return \Illuminate\Http\Response
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json([
-            'status' => 1,
+        $params = $request->all();
+
+        $emails = (object)[
+            'cc' => 'alexander@webscribble.com',
+            'bcc' => 'nick@webscribble.com',
+        ];
+
+        $emailUrl = "mailto:" . $emails->cc . "?bcc=" . $emails->bcc;
+
+        return view('welcome', [
+            'emailUrl' => $emailUrl,
+            'emailTitle' => 'Email this report'
         ]);
     }
 

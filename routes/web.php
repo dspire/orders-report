@@ -13,20 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('test', 'OrderHistoryController@index');
+Route::get('/', 'OrderHistoryController@index');
 
-// move to OrderHistoryController@index
-Route::get('/', function () {
-
-    $emails = (object)[
-        'cc' => 'alexander@webscribble.com',
-        'bcc' => 'nick@webscribble.com',
-    ];
-
-    $emailUrl = "mailto:" . $emails->cc . "?bcc=" . $emails->bcc;
-
-    return view('welcome', [
-        'emailUrl' => $emailUrl,
-        'emailTitle' => 'Email this report'
-    ]);
+Route::get('colors', function () {
+    return ['Violet', 'Mint', 'Purple'];
 });
