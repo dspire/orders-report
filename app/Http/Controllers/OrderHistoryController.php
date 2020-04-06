@@ -22,7 +22,7 @@ class OrderHistoryController extends Controller
             'bcc' => 'nick@webscribble.com',
         ];
 
-        $emailUrl = "mailto:" . $emails->cc . "?bcc=" . $emails->bcc;
+        $emailUrl = $emails->cc . "?bcc=" . $emails->bcc;
 
         return view('welcome', [
             'emailUrl' => $emailUrl,

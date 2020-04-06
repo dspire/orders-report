@@ -89,10 +89,6 @@
                 </div>
 
                 <div>
-                    <a href="{{ $emailUrl }}">{{ $emailTitle }}</a>
-                </div>
-
-                <div>
                     {{ Html::mailto($emailUrl, $emailTitle) }}
                 </div>
 
