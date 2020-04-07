@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class ClientSeeder extends Seeder
 {
@@ -11,6 +12,16 @@ class ClientSeeder extends Seeder
      */
     public function run()
     {
-        //
+        $clients = [
+            'Acme',
+            'Apple',
+            'Microsoft',
+        ];
+
+        foreach ($clients as $name) {
+            DB::table('clients')->insert([
+                'name' => $name
+            ]);
+        }
     }
 }
