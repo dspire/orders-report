@@ -4,6 +4,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use League\Csv\Reader;
 use Carbon\Carbon;
+use App\Datasets\OrderConvertor;
 
 class OrderHistorySeeder extends Seeder
 {
@@ -15,7 +16,7 @@ class OrderHistorySeeder extends Seeder
     public function __construct()
     {
         $this->table = 'order_history';
-        $this->path = base_path().'/database/seeds/csvs/orders.csv';
+        $this->path = base_path() . '/database/seeds/csvs/orders.csv';
         print_r($this->path);
 
         $this->setCustomSettings();
@@ -37,27 +38,26 @@ class OrderHistorySeeder extends Seeder
         $this->runCustomSeed();
     }
 
-    public function runCustomSeed() {
+    public function runCustomSeed()
+    {
         $csv = Reader::createFromPath($this->path)
             ->setHeaderOffset(0);
 
         $items = [];
         foreach ($csv as $row) {
-            //print_r($row);
             $items[] = array_change_key_case($row, CASE_LOWER);
         }
 
-        // mapping
         foreach ($items as $item) {
             $cols = $this->getMappedData($item);
             $cols = array_merge($cols, [
                 'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
-            // todo: convert string to date type
 
-            var_dump($cols);
-            //DB::table('clients')->insert($cols);
+            $cols['ordered_at'] = (new OrderConvertor())->convertDateField($cols['ordered_at']);
+
+            DB::table($this->table)->insert($cols);
         }
     }
 
