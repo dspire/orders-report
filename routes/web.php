@@ -18,3 +18,8 @@ Route::get('/', 'OrderHistoryController@index');
 Route::get('colors', function () {
     return ['Violet', 'Mint', 'Purple'];
 });
+
+
+Route::get('api/orders', 'OrderHistoryController@getItems');
+
+Route::get('api/clients', 'ClientController@index');

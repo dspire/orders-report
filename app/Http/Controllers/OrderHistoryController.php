@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 
 class OrderHistoryController extends Controller
 {
-    // split into OrderPageController, OrderController
     /**
      * Display a listing of the resource.
      *
@@ -28,6 +27,13 @@ class OrderHistoryController extends Controller
             'emailUrl' => $emailUrl,
             'emailTitle' => 'Email this report'
         ]);
+    }
+
+    public function getItems()
+    {
+        $items = ['entity' => 'OrderHistory'];
+
+        return response()->json($items);
     }
 
     /**
@@ -64,3 +70,4 @@ class OrderHistoryController extends Controller
         //
     }
 }
+// todo: split controller into OrderPageController, OrderController

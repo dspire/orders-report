@@ -1,18 +1,24 @@
 <?php
 
-use Flynsarmy\CsvSeeder\CsvSeeder;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use League\Csv\Reader;
+use Carbon\Carbon;
 
-class OrderHistorySeeder extends CsvSeeder
+class OrderHistorySeeder extends Seeder
 {
+    private $table = '';
+    private $path = '';
     private $isCsvLarge = false;
+    private $mapping = [];
 
     public function __construct()
     {
         $this->table = 'order_history';
-        $this->filename = base_path().'/database/seeds/csvs/orders.csv';
+        $this->path = base_path().'/database/seeds/csvs/orders.csv';
+        print_r($this->path);
 
-        $this->setSettings();
+        $this->setCustomSettings();
     }
 
     /**
@@ -28,20 +34,50 @@ class OrderHistorySeeder extends CsvSeeder
 
         DB::table($this->table)->truncate();
 
-        parent::run();
+        $this->runCustomSeed();
     }
 
-    /**
-     * Set custom settings and data mapping
-     */
-    private function setSettings()
+    public function runCustomSeed() {
+        $csv = Reader::createFromPath($this->path)
+            ->setHeaderOffset(0);
+
+        $items = [];
+        foreach ($csv as $row) {
+            //print_r($row);
+            $items[] = array_change_key_case($row, CASE_LOWER);
+        }
+
+        // mapping
+        foreach ($items as $item) {
+            $cols = $this->getMappedData($item);
+            $cols = array_merge($cols, [
+                'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+                'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+            // todo: convert string to date type
+
+            var_dump($cols);
+            //DB::table('clients')->insert($cols);
+        }
+    }
+
+    private function setCustomSettings()
     {
-        $this->offset_rows = 1;
         $this->mapping = [
-            0 => 'client_name',
-            1 => 'product_name',
-            2 => 'total',
-            3 => 'ordered_at',
+            'client' => 'client_name',
+            'product' => 'product_name',
+            'total' => 'total',
+            'date' => 'ordered_at',
         ];
+    }
+
+    public function getMappedData($csvItem)
+    {
+        $dbRecord = [];
+        foreach ($this->mapping as $key => $val) {
+            $dbRecord[$val] = $csvItem[$key];
+        }
+
+        return $dbRecord;
     }
 }
