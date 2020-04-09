@@ -25,8 +25,6 @@ class ClientSeeder extends Seeder
      */
     public function run()
     {
-
-
         $csv = Reader::createFromPath($this->path)
             ->setHeaderOffset(0);
 
@@ -35,7 +33,6 @@ class ClientSeeder extends Seeder
             $items[] = array_change_key_case($row, CASE_LOWER);
         }
 
-        // mapping
         foreach ($items as $item) {
             $cols = $this->getMappedData($item);
             $cols = array_merge($cols, [
@@ -48,7 +45,6 @@ class ClientSeeder extends Seeder
 
     public function getMappedData($item)
     {
-        // param $this->mapping
         return [
             'name' => $item['client']
         ];

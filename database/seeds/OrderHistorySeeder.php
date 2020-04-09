@@ -17,7 +17,6 @@ class OrderHistorySeeder extends Seeder
     {
         $this->table = 'order_history';
         $this->path = base_path() . '/database/seeds/csvs/orders.csv';
-        print_r($this->path);
 
         $this->setCustomSettings();
     }
