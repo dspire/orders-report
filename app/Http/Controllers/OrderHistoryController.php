@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class OrderHistoryController extends Controller
 {
@@ -31,7 +32,7 @@ class OrderHistoryController extends Controller
 
     public function getItems()
     {
-        $items = ['entity' => 'OrderHistory'];
+        $items = DB::table('order_history')->get();
 
         return response()->json($items);
     }
