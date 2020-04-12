@@ -20,8 +20,6 @@ class OrderApiController extends Controller
 
             $dbColumn = $this->getColumnBySynonym($fieldName);
             $hasSearch = empty($dbColumn) === false && empty($phrase) === false;
-
-            return $dbColumn;
         }
 
         $items = [];
@@ -39,13 +37,15 @@ class OrderApiController extends Controller
     private function getColumnBySynonym($synonym)
     {
         $mapping = [
-            'client '=> 'client_name',
+            'client'=> 'client_name',
             'product' => 'product_name',
             'total' => 'total',
             'date' => 'created_at',
         ];
 
-        if (isset($mapping[$synonym])) {
+        $col = $mapping[$synonym] ?? '';
+
+        if (!empty($col)) {
             return $mapping[$synonym];
         }
 
@@ -73,17 +73,6 @@ class OrderApiController extends Controller
     {
         //
     }
-
-//    /**
-//     * Show the form for editing the specified resource.
-//     *
-//     * @param  int  $id
-//     * @return \Illuminate\Http\Response
-//     */
-//    public function edit($id)
-//    {
-//        //
-//    }
 
     /**
      * Update the specified resource in storage.
