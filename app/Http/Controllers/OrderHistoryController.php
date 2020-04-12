@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Order;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class OrderHistoryController extends Controller
 {
@@ -30,17 +29,10 @@ class OrderHistoryController extends Controller
         ]);
     }
 
-    public function getItems()
-    {
-        $items = DB::table('order_history')->get();
-
-        return response()->json($items);
-    }
-
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -51,8 +43,8 @@ class OrderHistoryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Order  $order
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Order $order
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Order $order)
@@ -63,7 +55,7 @@ class OrderHistoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Order  $order
+     * @param \App\Order $order
      * @return \Illuminate\Http\Response
      */
     public function destroy(Order $order)

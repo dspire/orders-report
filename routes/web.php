@@ -15,11 +15,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', 'OrderHistoryController@index');
 
+Route::get('api/clients', 'ClientController@index');
+
+Route::resource('orders', 'OrderApiController')->only([
+    'index', 'store', 'show', 'update', 'destroy'
+]);
+
 Route::get('colors', function () {
     return ['Violet', 'Mint', 'Purple'];
 });
-
-
-Route::get('api/orders', 'OrderHistoryController@getItems');
-
-Route::get('api/clients', 'ClientController@index');
