@@ -21,6 +21,8 @@ Route::resource('orders', 'OrderApiController')->only([
     'index', 'store', 'show', 'update', 'destroy'
 ]);
 
+Route::get('chart/orders', 'OrderHistoryFeatureController@showChart');
+
 Route::get('colors', function () {
     return ['Violet', 'Mint', 'Purple'];
 });
