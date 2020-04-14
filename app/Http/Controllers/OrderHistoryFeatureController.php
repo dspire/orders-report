@@ -19,7 +19,7 @@ class OrderHistoryFeatureController extends Controller
 
             $items = $orders->searchByAll($phrase)->get();
 
-            return response()->json($items);
+            return $items;
         }
 
         $errors = [

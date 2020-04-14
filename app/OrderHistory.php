@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class OrderHistory extends Model
 {
@@ -52,15 +53,25 @@ class OrderHistory extends Model
      */
     public function scopeSearchByAll($query, $phrase)
     {
-        $keys = $this->getFillable();
 
-        $filters = array_fill_keys($keys, $phrase);
+//        $keys = $this->getFillable();
+//
+//        $filters = array_fill_keys($keys, $phrase);
+//
+//        $conditions = [
+//            ['client_name', '=', 'acme'],
+//            //['total', '=', '36'],
+//        ];
+//        return $query->where($conditions);
+        $phrase = $this->normalizeClient($phrase);
 
-        $conditions = [
-            ['client_name', '=', 'acme'],
-            ['total', '=', '36'],
-        ];
-        return $query->where($conditions);
+        return $query->where('client_name', '=', $phrase);
+    }
+
+    private function normalizeClient($title) {
+        $str = Str::lower($title);
+
+        return Str::ucfirst($str);
     }
 }
 
