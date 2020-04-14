@@ -57,7 +57,7 @@ class OrderHistory extends Model
         $filters = array_fill_keys($keys, $phrase);
 
         $conditions = [
-            ['client', '=', 'acme'],
+            ['client_name', '=', 'acme'],
             ['total', '=', '36'],
         ];
         return $query->where($conditions);
