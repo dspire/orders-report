@@ -48,7 +48,7 @@ class OrderHistory extends Model
      * @param $phrase
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function searchByAll($query, $phrase)
+    public function scopeSearchByAll($query, $phrase)
     {
         $keys = $this->getFillable();
 
