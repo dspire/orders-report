@@ -54,7 +54,7 @@ class OrderHistorySeeder extends Seeder
                 'updated_at' => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
 
-            $cols['ordered_at'] = (new OrderConvertor())->convertDateField($cols['ordered_at']);
+            //$cols['ordered_at'] = (new OrderConvertor())->convertDateField($cols['ordered_at']);
 
             DB::table($this->table)->insert($cols);
         }

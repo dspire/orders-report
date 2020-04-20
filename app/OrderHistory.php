@@ -19,56 +19,65 @@ class OrderHistory extends Model
     /**
      * Scope a query to only include popular users.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeFilter($query, $filters)
     {
         $operation_equal = '=';
         $items = [];
-        // use map fn
         foreach ($filters as $k => $val) {
+            $key = $this->getColumnSynonym($k);
             $items[] = [
-                $k, $operation_equal, $val
+                $key, $operation_equal, $val
             ];
         }
 
-        $conditions = [
-            ['client', '=', 'acme'],
-            ['total', '=', '36'],
-        ];
-        return $query->where($conditions);
+        return $query->where($items);
     }
 
-    public function filterBySynonyms($filters)
+    // class condition builder
+    public function buildConditionSearchByColumns($cols, $value)
     {
-        return false;
+        $collection = collect($cols);
+
+        $matrix = $collection->crossJoin(['='], [$value]);
+
+        return $matrix->all();
+    }
+
+    public function getColumnSynonym($name)
+    {
+        $mapping = [
+            'client' => 'client_name',
+            'product' => 'product_name',
+            'total' => 'total',
+            'date' => 'ordered_at',
+        ];
+
+        if (isset($mapping[$name])) {
+            return $mapping[$name];
+        }
+
+        return $name;
     }
 
     /**
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
      * @param $phrase
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeSearchByAll($query, $phrase)
     {
+        $cols = $this->getFillable();
+        $items = $this->buildConditionSearchByColumns($cols, $phrase);
 
-//        $keys = $this->getFillable();
-//
-//        $filters = array_fill_keys($keys, $phrase);
-//
-//        $conditions = [
-//            ['client_name', '=', 'acme'],
-//            //['total', '=', '36'],
-//        ];
-//        return $query->where($conditions);
-        $phrase = $this->normalizeClient($phrase);
-
-        return $query->where('client_name', '=', $phrase);
+        return $query->orWhere($items);
     }
 
-    private function normalizeClient($title) {
+    private function normalizeClient($title)
+    {
         $str = Str::lower($title);
 
         return Str::ucfirst($str);
