@@ -36,17 +36,24 @@ class OrderHistory extends Model
         return $query->where($items);
     }
 
-    // class condition builder
-    public function buildConditionSearchByColumns($cols, $value)
+    /**
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param $phrase
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSearchByAll($query, $phrase)
     {
-        $collection = collect($cols);
+        $items = collect($this->getFillable());
 
-        $matrix = $collection->crossJoin(['='], [$value]);
+        $paramsCollection = $items->map(function ($col) use($phrase) {
+            return [$col, '=', $phrase, 'or'];
+        });
 
-        return $matrix->all();
+        return $query->where($paramsCollection->all());
     }
 
-    public function getColumnSynonym($name)
+    private function getColumnSynonym($name)
     {
         $mapping = [
             'client' => 'client_name',
@@ -62,20 +69,6 @@ class OrderHistory extends Model
         return $name;
     }
 
-    /**
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param $phrase
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeSearchByAll($query, $phrase)
-    {
-        $cols = $this->getFillable();
-        $items = $this->buildConditionSearchByColumns($cols, $phrase);
-
-        return $query->orWhere($items);
-    }
-
     private function normalizeClient($title)
     {
         $str = Str::lower($title);
@@ -83,5 +76,3 @@ class OrderHistory extends Model
         return Str::ucfirst($str);
     }
 }
-
-// todo: try scope call another scope
