@@ -36,16 +36,28 @@ class OrderHistoryFeatureController extends Controller
      */
     public function showChart()
     {
-        // fetch last 7 day orders
-        $latestOrders = DB::table('order_history')
-            ->select(DB::raw('ordered_at, sum(total) as total_per_day'))
-            ->groupBy('ordered_at')
-            ->orderByRaw('STR_TO_DATE(ordered_at,\'%m/%d/%Y\') DESC')
-            ->take(Carbon::DAYS_PER_WEEK)
+        $records = DB::table('order_history')
+            ->select('ordered_at', 'total')
+            ->orderBy('ordered_at', 'desc')
+            ->take(9)
             ->get();
 
-        dd($latestOrders);
+        $grouped = $records
+            ->groupBy('ordered_at')
+            ->map(function ($group, $key) {
+                $sum = 0;
+                foreach ($group as $chunk) {
+                    $sum += floatval($chunk->total);
+                }
+                if ($sum == false) {
+                    throw new Exception('Problem with sum!');
+                }
+                return $sum;
+            });
 
-        return view('orders.chart');
+        return view('orders.chart', [
+            'labels' => $grouped->keys()->all(),
+            'dataset' => $grouped->values()->all(),
+        ]);
     }
 }

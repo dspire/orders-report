@@ -4,27 +4,42 @@
     <title>Show me line!</title>
 </head>
 <body>
+<style>
+.footer,
+.push {
+    height: 50px;
+}
+</style>
+
 <h1>
     Revenue table
 </h1>
 
 <canvas id="myChart"></canvas>
+
+<footer class="footer"></footer>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 
 <script type="text/javascript">
-    var ctx = document.getElementById('myChart').getContext('2d');
-    var chart = new Chart(ctx, {
+    let chartLabels = @json($labels);
+    let chartDataset = @json($dataset);
+
+    let customLabels = chartLabels.map(q => '`' + q + '`');
+
+    let ctx = document.getElementById('myChart').getContext('2d');
+    let chart = new Chart(ctx, {
         // The type of chart we want to create
         type: 'line',
 
         // The data for our dataset
         data: {
-            labels: [' 3/1/2015 ', ' 3/5/2015 ', ' 3/9/2015 '],
+            labels: customLabels,
             datasets: [{
-                label: 'My First dataset',
+                label: 'Week Revenue',
                 backgroundColor: 'rgb(255, 99, 132)',
                 borderColor: 'rgb(255, 99, 132)',
-                data: [0, 10, 5, 2, 20, 30, 45]
+                data: chartDataset
             }]
         },
 

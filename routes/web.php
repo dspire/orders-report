@@ -23,3 +23,32 @@ Route::resource('orders', 'OrderApiController')->only([
 
 Route::get('chart/orders', 'OrderHistoryFeatureController@showChart');
 Route::get('search/orders', 'OrderHistoryFeatureController@search');
+
+
+# Sandbox for collections
+Route::get('play/group-master', function () {
+    $tbl = \Illuminate\Support\Facades\DB::table('order_history');
+
+    $items = $tbl->orderBy('ordered_at', 'desc')->take(12)->get();
+
+    // values.groupBy(column).eachGroup().sum(total)
+    $grouped = $items->groupBy('ordered_at');
+    $multiplied = $grouped->map(function ($group, $key) {
+        $sum = 0;
+        foreach ($group as $chunk) {
+            $sum += floatval($chunk->total);
+        }
+        if ($sum == false) {
+            throw new Exception('!wat');
+        }
+        return $sum;
+    });
+
+
+
+    return $multiplied;
+});
+
+Route::get('play/reduce-master', function () {
+    // todo: achieve the same result with reduce method as route: play/group-master
+});
