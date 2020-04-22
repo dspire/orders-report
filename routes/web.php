@@ -23,8 +23,3 @@ Route::resource('orders', 'OrderApiController')->only([
 
 Route::get('chart/orders', 'OrderHistoryFeatureController@showChart');
 Route::get('search/orders', 'OrderHistoryFeatureController@search');
-    // search/orders?phrase=acme
-
-Route::get('colors', function () {
-    return ['Violet', 'Mint', 'Purple'];
-});
