@@ -23,7 +23,7 @@ class OrderHistoryController extends Controller
 
         $emailUrl = $emails->cc . "?bcc=" . $emails->bcc;
 
-        return view('welcome', [
+        return view('index', [
             'emailUrl' => $emailUrl,
             'emailTitle' => 'Email this report'
         ]);
