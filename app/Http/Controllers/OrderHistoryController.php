@@ -17,8 +17,8 @@ class OrderHistoryController extends Controller
         $params = $request->all();
 
         $emails = (object)[
-            'cc' => 'alexander@webscribble.com',
-            'bcc' => 'nick@webscribble.com',
+            'cc' => 'webmaestro.alex@gmail.com',
+            'bcc' => 'webmaestro.alex@gmail.com',
         ];
 
         $emailUrl = $emails->cc . "?bcc=" . $emails->bcc;

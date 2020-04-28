@@ -42,22 +42,16 @@ class OrderHistoryFeatureController extends Controller
             ->take(9)
             ->get();
 
-        $grouped = $records
-            ->groupBy('ordered_at')
-            ->map(function ($group, $key) {
-                $sum = 0;
-                foreach ($group as $chunk) {
-                    $sum += floatval($chunk->total);
-                }
-                if ($sum == false) {
-                    throw new Exception('Problem with sum!');
-                }
-                return $sum;
-            });
+        $grouped = $records->reduce(function ($carry, $item) {
+            $sum = $carry[$item->ordered_at] ?? 0;
+            $carry[$item->ordered_at] = $sum + floatval($item->total);
+
+            return $carry;
+        }, []);
 
         return view('orders.chart', [
-            'labels' => $grouped->keys()->all(),
-            'dataset' => $grouped->values()->all(),
+            'labels' => array_keys($grouped),
+            'dataset' => array_values($grouped),
         ]);
     }
 }
