@@ -77,7 +77,7 @@
                 <th v-for="key in columns"
                     @click="sortBy(key)"
                     :class="{ active: sortKey == key }">
-                    {{ key | capitalize }}
+                    @{{ key | capitalize }}
                     <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
               </span>
                 </th>
@@ -86,7 +86,7 @@
             <tbody>
             <tr v-for="entry in filteredHeroes">
                 <td v-for="key in columns">
-                    {{entry[key]}}
+                    @{{entry[key]}}
                 </td>
             </tr>
             </tbody>
