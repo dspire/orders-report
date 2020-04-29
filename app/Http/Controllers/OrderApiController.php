@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\OrderHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -11,25 +12,27 @@ class OrderApiController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request, OrderHistory $orders)
     {
         $hasSearch = false;
-        if ($request->has('phrase')) {
-            $fieldName = trim($request->input('field'));
-            $phrase = trim($request->input('phrase'));
-
-            $dbColumn = $this->getColumnBySynonym($fieldName);
-            $hasSearch = empty($dbColumn) === false && empty($phrase) === false;
+//        if ($request->has('phrase')) {
+//            $fieldName = trim($request->input('field'));
+//            $phrase = trim($request->input('phrase'));
+//
+//            $dbColumn = $this->getColumnBySynonym($fieldName);
+//            $hasSearch = empty($dbColumn) === false && empty($phrase) === false;
+//        }
+//
+//        $items = [];
+//        if ($hasSearch) {
+//            $items = DB::table('order_history')->where($dbColumn, '=', $phrase)->get();
+//        }
+        $params = $request->all();
+        if ($request->has('params')) {
+            //dd($input = $request->all());
         }
 
-        $items = [];
-        if ($hasSearch) {
-            $items = DB::table('order_history')->where($dbColumn, '=', $phrase)->get();
-        }
-
-        if (!$hasSearch) {
-            $items = DB::table('order_history')->get();
-        }
+        $items = $orders->filter($params)->get();
 
         return response()->json($items);
     }

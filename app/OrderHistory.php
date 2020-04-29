@@ -2,11 +2,14 @@
 
 namespace App;
 
+use App\Traits\Filterable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class OrderHistory extends Model
 {
+    use Filterable;
+
     protected $table = 'order_history';
 
     protected $fillable = [
@@ -16,24 +19,34 @@ class OrderHistory extends Model
         'ordered_at',
     ];
 
+    protected $filtersMap = [
+        'client' => 'client_name',
+        'product' => 'product_name',
+        'total' => 'total',
+        'date' => 'ordered_at',
+    ];
+
+    protected $useFiltersOnly = false;
+
     /**
-     * Scope a query to only include popular users.
-     *
      * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array $filters
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeFilter($query, $filters)
     {
+        $filters = $this->sanitazeFilters($filters);
+
         $operation_equal = '=';
         $items = [];
         foreach ($filters as $k => $val) {
-            $key = $this->getColumnSynonym($k);
-            $items[] = [
+            $key = $this->mapFilterToColumn($k);
+            $items[$key] = [
                 $key, $operation_equal, $val
             ];
         }
 
-        return $query->where($items);
+        return $query->where(array_values($items));
     }
 
     /**
@@ -51,22 +64,6 @@ class OrderHistory extends Model
         });
 
         return $query->where($paramsCollection->all());
-    }
-
-    private function getColumnSynonym($name)
-    {
-        $mapping = [
-            'client' => 'client_name',
-            'product' => 'product_name',
-            'total' => 'total',
-            'date' => 'ordered_at',
-        ];
-
-        if (isset($mapping[$name])) {
-            return $mapping[$name];
-        }
-
-        return $name;
     }
 
     private function normalizeClient($title)
