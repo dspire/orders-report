@@ -2,63 +2,47 @@
 
 namespace App\Http\Controllers;
 
+use App\Features\Filtering\SortParam;
 use App\OrderHistory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class OrderApiController extends Controller
 {
     /**
      * @param Request $request
+     * @param OrderHistory $orders
      * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request, OrderHistory $orders)
     {
-        $hasSearch = false;
-//        if ($request->has('phrase')) {
-//            $fieldName = trim($request->input('field'));
-//            $phrase = trim($request->input('phrase'));
-//
-//            $dbColumn = $this->getColumnBySynonym($fieldName);
-//            $hasSearch = empty($dbColumn) === false && empty($phrase) === false;
-//        }
-//
-//        $items = [];
-//        if ($hasSearch) {
-//            $items = DB::table('order_history')->where($dbColumn, '=', $phrase)->get();
-//        }
-        $params = $request->all();
-        if ($request->has('params')) {
-            //dd($input = $request->all());
+        /**
+         * @var Builder $Q
+         */
+        $Q = $orders->filter($request->all());
+
+        if ($request->input('details')) {
+            $cols = Str::of($request->input('details'))
+                ->explode(',');
+            $cols = $cols->intersect($orders->getFillable());
+            $Q->select($cols->all());
         }
 
-        $items = $orders->filter($params)->get();
+        if ($request->has('sort')) {
+            $param = $request->input('sort');
+            $Q = $Q->customOrderBy(new SortParam($param));
+        }
+
+        $items = $Q->get();
 
         return response()->json($items);
-    }
-
-    private function getColumnBySynonym($synonym)
-    {
-        $mapping = [
-            'client'=> 'client_name',
-            'product' => 'product_name',
-            'total' => 'total',
-            'date' => 'created_at',
-        ];
-
-        $col = $mapping[$synonym] ?? '';
-
-        if (!empty($col)) {
-            return $mapping[$synonym];
-        }
-
-        return false;
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -69,7 +53,7 @@ class OrderApiController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -80,8 +64,8 @@ class OrderApiController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -92,7 +76,7 @@ class OrderApiController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
