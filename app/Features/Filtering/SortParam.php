@@ -14,17 +14,21 @@ class SortParam
         $this->row = $sortRow;
     }
 
-    public function isValid(): bool
+    /**
+     * Check acceptable characters
+     *
+     * @return bool
+     */
+    public function isInvalid(): bool
     {
         $pattern = '#[a-z,\-\+\s]+#';
-        return StringHelper::checkSignsBy($pattern, $this->row);
-
+        return StringHelper::checkSignsBy($pattern, $this->row) === false;
     }
 
     public function parse(): array
     {
         if (empty($this->row)) return [];
-        if ($this->isValid() === false) {
+        if ($this->isInvalid()) {
             throw new \InvalidArgumentException('Invalid argument `sort param` passed');
         }
 
