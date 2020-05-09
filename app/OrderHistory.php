@@ -2,10 +2,8 @@
 
 namespace App;
 
-use App\Features\Filtering\SortParam;
 use App\Traits\Filterable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class OrderHistory extends Model
 {
@@ -65,27 +63,5 @@ class OrderHistory extends Model
         });
 
         return $query->where($paramsCollection->all());
-    }
-
-    /**
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param SortParam $sort
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeCustomOrderBy($query, SortParam $sort)
-    {
-        return $query->orderByRaw($sort->toSqlString());
-    }
-
-    public function scopeSelectDetails()
-    {
-        
-    }
-
-    private function normalizeClient($title)
-    {
-        $str = Str::lower($title);
-
-        return Str::ucfirst($str);
     }
 }

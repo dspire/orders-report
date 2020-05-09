@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Features\Filtering\DetailsParam;
 use App\Features\Filtering\SortParam;
 use App\OrderHistory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class OrderApiController extends Controller
 {
@@ -22,19 +22,27 @@ class OrderApiController extends Controller
          */
         $Q = $orders->filter($request->all());
 
-        if ($request->input('details')) {
-            $cols = Str::of($request->input('details'))
-                ->explode(',');
-            $cols = $cols->intersect($orders->getFillable());
-            $Q->select($cols->all());
+        if ($request->has('details')) {
+            $details = new DetailsParam($request->input('details'));
+            $details->setAcceptable($orders->getFillable());
+            $Q->select($details->toArray());
         }
 
         if ($request->has('sort')) {
-            $param = $request->input('sort');
-            $Q = $Q->customOrderBy(new SortParam($param));
+            $sortParam = new SortParam($request->input('sort'));
+            $Q->orderByRaw($sortParam->toSqlString());
         }
 
-        $items = $Q->get();
+        if ($request->has('offset')) {
+            $param = (int)$request->input('offset');
+            $Q = $Q->skip($param);
+        }
+
+        if ($request->has('limit')) {
+            $limitParam = (int)$request->input('limit');
+        }
+
+        $items = $Q->take($limitParam ?? 20)->get();
 
         return response()->json($items);
     }
